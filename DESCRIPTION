@@ -1,7 +1,7 @@
 Package: gmwmx2
 Title: Estimate Functional and Stochastic Parameters of Linear Models
         with Correlated Residuals and Missing Data
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: c(
     person("Lionel", "Voirol", email = "lionelvoirol@hotmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-1696-1407")),
     person("Haotian", "Xu", role = "aut",  comment = c(ORCID = "0000-0001-8336-4536")),
@@ -27,7 +27,7 @@ URL: https://github.com/SMAC-Group/gmwmx2
 BugReports: https://github.com/SMAC-Group/gmwmx2/issues
 LazyData: true
 NeedsCompilation: yes
-Packaged: 2025-03-10 04:08:34 UTC; lionel
+Packaged: 2025-04-10 21:56:28 UTC; lionel
 Author: Lionel Voirol [aut, cre] (<https://orcid.org/0000-0003-1696-1407>),
   Haotian Xu [aut] (<https://orcid.org/0000-0001-8336-4536>),
   Yuming Zhang [aut] (<https://orcid.org/0000-0003-2293-9601>),
@@ -36,4 +36,4 @@ Author: Lionel Voirol [aut, cre] (<https://orcid.org/0000-0003-1696-1407>),
   Stéphane Guerrier [aut] (<https://orcid.org/0000-0003-0002-8794>)
 Maintainer: Lionel Voirol <lionelvoirol@hotmail.com>
 Repository: CRAN
-Date/Publication: 2025-03-10 14:40:02 UTC
+Date/Publication: 2025-04-10 22:20:02 UTC

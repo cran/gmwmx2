@@ -17,9 +17,11 @@
 download_station_ngl <- function(station_name, verbose = FALSE) {
   # station_name="AB21"
 
-  # download file from  string formatted as "http://geodesy.unr.edu/gps_timeseries/tenv3/IGS14/", station_name, ".tenv3"
-  # see help file for .tenv3 file here : http://geodesy.unr.edu/gps_timeseries/README_tenv3.txt
+  # download file from  string formatted as "https://geodesy.unr.edu/gps_timeseries/tenv3/IGS14/", station_name, ".tenv3"
+  # see help file for .tenv3 file here : https://geodesy.unr.edu/gps_timeseries/README_tenv3.txt
 
+
+  # ------------------------------------------------------------------------------- Load all stations to check if specified station is accesible
   # check that station is available
   df_all_stations <- download_all_stations_ngl()
   if (!station_name %in% df_all_stations$station_name) {
@@ -28,20 +30,21 @@ download_station_ngl <- function(station_name, verbose = FALSE) {
 
 
   # -------------- load .tenv3 file using data.table fread
+  # address <- paste0("https://geodesy.unr.edu/gps_timeseries/tenv3/IGS14/", station_name, ".tenv3")
   # df_position <- data.table::fread(
-  #   paste0("https://geodesy.unr.edu/gps_timeseries/tenv3/IGS14/", station_name, ".tenv3"),
-  #   header = TRUE, showProgress = FALSE
+  #   address,
+  #   header = TRUE,
+  #   showProgress = verbose
   # )
 
-
-  # after discussing with Prof. Hammond, the SSL certificate is for for now invalid, this is a temporary workaround
-
+  # ------------------------------------------------------------------------------- Load position time series
   file_name <- tempfile()
   address <- paste0("https://geodesy.unr.edu/gps_timeseries/tenv3/IGS14/", station_name, ".tenv3")
 
-  # Create request and disable SSL verification
-  req <- request(address) %>%
-    req_options(ssl_verifypeer = 0, ssl_verifyhost = 0)
+  # Create request
+  req <- request(address) %>% req_timeout(60)
+  # disable SSL verification
+  # %>%     req_options(ssl_verifypeer = 0, ssl_verifyhost = 0)
 
   # Conditionally enable verbosity
   if (verbose) {
@@ -89,24 +92,25 @@ download_station_ngl <- function(station_name, verbose = FALSE) {
   # load steps from file steps and extract all steps associated with the station
   # see README for step file: https://geodesy.unr.edu/NGLStationPages/steps_readme.txt
 
-
-
-
   # # # Using fread for fast reading
   # dt <- data.table::fread("https://geodesy.unr.edu/NGLStationPages/steps.txt",
   #   fill = 7, # Handle varying number of columns
-  #   showProgress = FALSE,
+  #   showProgress = verbose,
   #   header = FALSE, # Assuming no header
-  #   na.strings = ""
-  # ) # Empty fields become NA
+  #   na.strings = "" # Empty fields become NA
+  # )
+
+
+
+  # ------------------------------------------------------------------------------- Load steps file
 
   file_name <- tempfile()
   address <- "https://geodesy.unr.edu/NGLStationPages/steps.txt"
 
-
-  # Create request and disable SSL verification
-  req <- request(address) %>%
-    req_options(ssl_verifypeer = 0, ssl_verifyhost = 0)
+  # Create request
+  req <- request(address) %>% req_timeout(60)
+  # and disable SSL verification
+  # %>%     req_options(ssl_verifypeer = 0, ssl_verifyhost = 0)
 
   # Conditionally enable verbosity
   if (verbose) {
@@ -168,7 +172,7 @@ download_station_ngl <- function(station_name, verbose = FALSE) {
 
 #' Download all stations name and location from the Nevada Geodetic Laboratory
 #' @export
-#' @importFrom httr2 request req_options req_verbose req_perform resp_body_raw
+#' @importFrom httr2 request req_options req_verbose req_perform resp_body_raw req_timeout
 #' @importFrom data.table fread
 #' @param verbose A \code{boolean} that controls the level of detail in the output of the \code{wget} command used to load data. Default is \code{FALSE}.
 #' @return Return a \code{data.frame} with all stations name, latitude, longitude and heights.
@@ -177,22 +181,23 @@ download_station_ngl <- function(station_name, verbose = FALSE) {
 #' head(df_all_stations)
 #'
 download_all_stations_ngl <- function(verbose = FALSE) {
-  # load file from http://geodesy.unr.edu/NGLStationPages/llh.out using data.table fread
+  # load file from https://geodesy.unr.edu/NGLStationPages/llh.out using data.table fread
 
   # load all stations
   # df_all_stations <- data.table::fread(
-  #   "http://geodesy.unr.edu/NGLStationPages/llh.out",
+  #   "https://geodesy.unr.edu/NGLStationPages/llh.out",
   #   header = FALSE,
-  #   showProgress = FALSE
+  #   showProgress = verbose
   # )
 
-  # after discussing with Prof. Hammond, the SSL certificate is for now invalid, this is a temporary workaround
   file_name <- tempfile()
   address <- "https://geodesy.unr.edu/NGLStationPages/llh.out"
 
-  # Create request and disable SSL verification
-  req <- request(address) %>%
-    req_options(ssl_verifypeer = 0, ssl_verifyhost = 0)
+  # # Create request
+  req <- request(address) %>% req_timeout(60)
+
+  # and disable SSL verification
+  # %>%    req_options(ssl_verifypeer = 0, ssl_verifyhost = 0)
 
   # Conditionally enable verbosity
   if (verbose) {
@@ -202,10 +207,10 @@ download_all_stations_ngl <- function(verbose = FALSE) {
   # Perform request
   resp <- req_perform(req)
 
-  # Write the content to a file
+  # # Write the content to a file
   writeBin(resp_body_raw(resp), file_name)
-
-  # Read the downloaded file into a data table
+  #
+  # # Read the downloaded file into a data table
   df_all_stations <- data.table::fread(file_name, header = FALSE)
 
   # set column names on loaded data
@@ -223,14 +228,13 @@ download_all_stations_ngl <- function(verbose = FALSE) {
 #' df_estimated_velocities <- download_estimated_velocities_ngl()
 #' head(df_estimated_velocities)
 download_estimated_velocities_ngl <- function(verbose = FALSE) {
-  # # load file from http://geodesy.unr.edu/velocities/midas.IGS14.txt
-  # README for file available at NGL website: http://geodesy.unr.edu/velocities/midas.readme.txt
+  # # load file from https://geodesy.unr.edu/velocities/midas.IGS14.txt
+  # README for file available at NGL website: https://geodesy.unr.edu/velocities/midas.readme.txt
 
-  # after discussing with Prof. Hammond, the SSL certificate is for now invalid, this is a temporary workaround
   # df_estimated_velocities_midas <- data.table::fread(
   #   "https://geodesy.unr.edu/velocities/midas.IGS14.txt",
   #   header = FALSE,
-  #   showProgress = FALSE
+  #   showProgress = verbose
   # )
 
 
@@ -238,8 +242,8 @@ download_estimated_velocities_ngl <- function(verbose = FALSE) {
   address <- "https://geodesy.unr.edu/velocities/midas.IGS14.txt"
 
   # Create request and disable SSL verification
-  req <- request(address) %>%
-    req_options(ssl_verifypeer = 0, ssl_verifyhost = 0)
+  req <- request(address) %>% req_timeout(60)
+  # %>% req_options(ssl_verifypeer = 0, ssl_verifyhost = 0)
 
   # Conditionally enable verbosity
   if (verbose) {

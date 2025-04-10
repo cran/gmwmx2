@@ -4,6 +4,10 @@
 
 -->
 ![](https://img.shields.io/github/last-commit/SMAC-Group/gmwmx2) 
+[![CRAN status](https://www.r-pkg.org/badges/version/gmwmx2)](https://CRAN.R-project.org/package=gmwmx2)
+[![CRAN RStudio mirror
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/gmwmx2)](https://www.r-pkg.org/pkg/gmwmx2)
+[![metacran downloads](https://cranlogs.r-pkg.org/badges/last-week/gmwmx2)](https://cran.r-project.org/package=gmwmx2)
 [<img src="https://s-a.github.io/license/img/agpl-3.0.svg" />](https://s-a.github.io/license/?license=agpl-3.0&fullname=Stephan%20Ahlf&year=2015&profile=https://github.com/s-a&projectUrl=https://github.com/s-a/license&projectName=License%20Demo "")
 ![R-CMD-check](https://github.com/SMAC-Group/gmwmx2/actions/workflows/R-CMD-check.yaml/badge.svg)
 [![minimal R version](https://img.shields.io/badge/R%3E%3D-4.0.0-6666ff.svg)](https://cran.r-project.org/)
@@ -20,7 +24,22 @@ Below are instructions on how to install and make use of the `gmwmx2` package.
 
 ## Installation Instructions
 
-The `gmwmx2` package is currently only available on GitHub. You can install the `gmwmx2` package with:
+The `gmwmx2` package is available on both CRAN and GitHub. The CRAN
+version is considered stable while the GitHub version is subject to
+modifications/updates which may lead to installation problems or broken
+functions. You can install the stable version of the `gmwmx2` package
+with:
+
+``` r
+install.packages("gmwmx2")
+```
+
+For users who are interested in having the latest developments, the
+GitHub version is ideal although more dependencies are required to run a
+stable version of the package. Most importantly, users **must** have a
+(`C++`) compiler installed on their machine that is compatible with `R`
+(e.g. `Clang`).
+
 
 ``` r
 # Install dependencies
@@ -33,6 +52,7 @@ devtools::install_github("SMAC-Group/gmwmx2")
 devtools::install_github("SMAC-Group/gmwmx2", build_vignettes = TRUE)
 ```
 
+
 ### External `R` libraries
 
 The `gmwmx2` package relies on a limited number of external libraries, but notably on `Rcpp` and `RcppArmadillo` which require a `C++` compiler for installation, such as for example `gcc`.
@@ -42,7 +62,7 @@ The `gmwmx2` package relies on a limited number of external libraries, but notab
 
 The original [`gmwmx`](https://github.com/SMAC-Group/gmwmx) package was designed to compare estimated parameters obtained from the GMWMX with the ones obtained with the Maximum Likelihood Estimator (MLE) implemented in [Hector](https://teromovigo.com/product/hector/). 
 This allowed for the replication of examples and simulations discussed in [Cucci, D. A., Voirol, L., Kermarrec, G., Montillet, J. P., and Guerrier, S. (2022)](https://doi.org/10.1007/s00190-023-01702-8).
-However, as we advanced in the methodological and computational development of the GMWMX method, we sought a standalone implementation that did not include [Hector](https://teromovigo.com/hector/).
+However, as we advanced in the methodological and computational development of the GMWMX method, we sought a standalone implementation that did not include [Hector](https://teromovigo.com/product/hector/).
 Additionally, many of the new computational techniques and structural improvements would have been challenging to incorporate into the previous `gmwmx` package. 
 Therefore, we will now exclusively support and develop the `gmwmx2` package.
 
@@ -51,7 +71,8 @@ Therefore, we will now exclusively support and develop the `gmwmx2` package.
 The `gmwmx2` package is currently in the early stages of development. While the supported features are stable, we have numerous additional methods and computational enhancements planned for gradual integration. These include:
 
 - Computational optimization to improve speed
-- Support for a wider range of stochastic models
+- Support for a wider range of stochastic models to describe the error term
+- Support for a wider range of stochastic models to describe the missingness process 
 - A computationally efficient model selection criterion for stochastic models
 
 
