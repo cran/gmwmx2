@@ -1,7 +1,7 @@
 Package: gmwmx2
 Title: Estimate Functional and Stochastic Parameters of Linear Models
         with Correlated Residuals and Missing Data
-Version: 0.0.3
+Version: 0.0.4
 Authors@R: c(
     person("Lionel", "Voirol", email = "lionelvoirol@hotmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-1696-1407")),
     person("Haotian", "Xu", role = "aut",  comment = c(ORCID = "0000-0001-8336-4536")),
@@ -15,7 +15,7 @@ Description: Implements the Generalized Method of Wavelet Moments with Exogenous
              The 'gmwmx2' package provides functions to load and plot Global Navigation Satellite System (GNSS) data from the Nevada Geodetic Laboratory and functions to estimate linear model model with correlated residuals in presence of missing data.
 License: AGPL-3
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Language: en-US
 Depends: R (>= 4.0.0)
 VignetteBuilder: knitr
@@ -27,7 +27,7 @@ URL: https://github.com/SMAC-Group/gmwmx2
 BugReports: https://github.com/SMAC-Group/gmwmx2/issues
 LazyData: true
 NeedsCompilation: yes
-Packaged: 2025-08-19 09:17:26 UTC; lionel
+Packaged: 2026-01-07 15:09:54 UTC; lionel
 Author: Lionel Voirol [aut, cre] (ORCID:
     <https://orcid.org/0000-0003-1696-1407>),
   Haotian Xu [aut] (ORCID: <https://orcid.org/0000-0001-8336-4536>),
@@ -38,4 +38,4 @@ Author: Lionel Voirol [aut, cre] (ORCID:
     <https://orcid.org/0000-0003-0002-8794>)
 Maintainer: Lionel Voirol <lionelvoirol@hotmail.com>
 Repository: CRAN
-Date/Publication: 2025-08-19 10:10:02 UTC
+Date/Publication: 2026-01-07 23:40:02 UTC
