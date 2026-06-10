@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Estimate geodetic time series from the Nevada Geodetic Laboratory</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Estimate geodetic time series from the
+Nevada Geodetic Laboratory</h1>
+
+
+
+<div id="model-and-estimator" class="section level1">
+<h1>Model and estimator</h1>
+<p>This vignette builds on the general framework described in the
+vignettes “Estimate linear models with dependent errors” and “Estimate
+linear models with dependent errors and missing observations”. We do not
+repeat the full model, missingness mechanism, or estimation details
+here. Please refer to these vignettes for the formal setup, and use this
+one as a hands-on guide for geodetic time series from the Nevada
+Geodetic Laboratory.</p>
+</div>
+<div id="estimating-tectonic-velocities-and-crustal-uplift" class="section level1">
+<h1>Estimating tectonic velocities and crustal uplift</h1>
+<p>While the GMWMX, as described above and in more detail in <span class="citation">Voirol et al. (2024)</span>, is a general method for
+estimating large linear models with complex dependence structures in
+presence of missing observations, the <code>gmwmx2</code> <code>R</code>
+package allows to estimate tectonic velocities and crustal uplift from
+position time series in graticule distance (GD) coordinates provided by
+the Nevada Geodetic Laboratory <span class="citation">(Blewitt 2024;
+Blewitt et al. 2018)</span>.</p>
+<div id="trajectory-model" class="section level2">
+<h2>Trajectory model</h2>
+<p>To estimate the trajectory model (see, e.g., <span class="citation">Bevis and Brown (2014)</span> for more details), we
+construct the design matrix <span class="math inline">\(\boldsymbol{X}\)</span> such that the <span class="math inline">\(i\)</span>-th component of the vector <span class="math inline">\(\mathbf{X} {{\boldsymbol{\beta}}}\)</span> can be
+described as follows, with <span class="math inline">\(t_i\)</span>
+representing the <span class="math inline">\(i^{\text{th}}\)</span>
+ordered time point (epoch) in Modified Julian Date and <span class="math inline">\(t_0\)</span> representing the reference epoch
+located exactly in the middle of the start and end points of the time
+series:</p>
+<span class="math display">\[\begin{split}
+\mathbb{E}[\mathbf{Y}_i] &amp;= \mathbf{X}_i^T
+{{\boldsymbol{\beta}}}  \\
+&amp;= a + b \left(t_{i} - t_0\right) +  \sum_{h=1}^{m}\left[c_{h} \sin
+\left(2 \pi f_{h} t_{i}\right)  + d_h \cos \left(2 \pi f_h
+t_i\right)\right] + \\&amp; \sum_{j=1}^{r}e_j H\left(t_i - t_j\right) +
+\sum_{k = 1 }^{s} l_k \left[1-
+\exp\left(\frac{-(t_i-t_k)}{\tau_k}\right)\right]H\left(t_{i}-\tau_k\right)
+\end{split}\]</span>
+<p>where <span class="math inline">\(a\)</span> is the initial position
+at the reference epoch <span class="math inline">\(t_0\)</span>, <span class="math inline">\(b\)</span> is the velocity parameter, and <span class="math inline">\(c_h\)</span> and <span class="math inline">\(d_h\)</span> are the periodic motion parameters
+(<span class="math inline">\(h = 1\)</span> and <span class="math inline">\(h = 2\)</span> represent the annual and
+semi-annual seasonal terms, respectively with <span class="math inline">\(f_1 = \frac{1}{365.25}\)</span> and <span class="math inline">\(f_2 = \frac{2}{365.25}\)</span>). The offset terms
+model earthquakes, equipment changes, or human intervention, in which
+<span class="math inline">\(e_j\)</span> is the magnitude of the step at
+epochs <span class="math inline">\(t_j\)</span>, <span class="math inline">\(r\)</span> is the total number of offsets, and
+<span class="math inline">\(H\)</span> is the Heaviside step function
+defined as <span class="math inline">\(H(x):= \begin{cases}1, &amp; x
+\geq 0 \\ 0, &amp; x&lt;0\end{cases}\)</span>. The last term allows us
+to model post-seismic deformation (see, e.g., <span class="citation">Sobrero et al. (2020)</span>) where <span class="math inline">\(s\)</span> is the number of post-seismic
+relaxation times specified, <span class="math inline">\(t_k\)</span> is
+the time when the relaxation <span class="math inline">\(k\)</span>
+starts in Modified Julian Date (MJD), <span class="math inline">\(\tau_k\)</span> is the relaxation period in days
+for the post-seismic relaxation <span class="math inline">\(k\)</span>,
+and <span class="math inline">\(l_k\)</span> is the amplitude of the
+transient. Note that by default the estimates of the functional
+parameters are provided in units/day.</p>
+<p>When loading data from a specific station using
+<code>gmwmx2::download_station_ngl()</code>, we extract from the Nevada
+Geodetic Laboratory the position time series in GD coordinates, the time
+steps associated with equipment or software changes, and the time steps
+associated with earthquakes near the station. All these objects are
+stored in an object of class <code>gnss_ts_ngl</code>.</p>
+<p>When applying the function <code>gmwmx2::gmwmx2()</code> to an object
+of class <code>gnss_ts_ngl</code>, we construct the design matrix <span class="math inline">\(\boldsymbol{X}\)</span> by considering an offset
+term for all equipment or software change steps and all earthquakes
+indicated by the NGL. We also specify a post-seismic relaxation term for
+all earthquakes indicated by the NGL. If no relaxation time is specified
+in the argument <code>vec_earthquakes_relaxation_time</code>, we use a
+default relaxation time of <span class="math inline">\(365.25\)</span>
+days.</p>
+</div>
+<div id="stochastic-model" class="section level2">
+<h2>Stochastic model</h2>
+<p>It is generally recognized that noise in GNSS time series is best
+described by a combination of colored noise plus white noise <span class="citation">(He et al. 2017; Langbein 2008; Williams et al. 2004;
+Bos et al. 2013)</span>, where the white noise generally models noise at
+high frequencies and the colored noise models the lower frequencies of
+the spectrum.</p>
+<p>In <code>gmwmx2</code>, you can pass any valid stochastic model to
+the estimator: either a single time-series model (e.g.,
+<code>wn()</code>, <code>ar1()</code>, <code>pl()</code>,
+<code>matern()</code>, <code>rw()</code>, <code>flicker()</code>) or a
+composite sum model built with <code>+</code> (e.g.,
+<code>wn() + pl()</code> or <code>wn() + ar1() + rw()</code>). This
+makes the stochastic specification very general and easy to adapt to
+your application.</p>
+</div>
+</div>
+<div id="example-of-estimation" class="section level1">
+<h1>Example of estimation</h1>
+<p>Let us showcase how to estimate tectonic velocity for one specific
+component (North, East, or Vertical) of one station.</p>
+<p>First, load the <code>gmwmx2</code> package.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(gmwmx2)</span></code></pre></div>
+<div id="download-a-station-from-nevada-geodetic-laboratory" class="section level2">
+<h2>Download a station from Nevada Geodetic Laboratory</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>station_data <span class="ot">&lt;-</span> <span class="fu">download_station_ngl</span>(<span class="st">&quot;1LSU&quot;</span>)</span></code></pre></div>
+</div>
+<div id="plot-station" class="section level2">
+<h2>Plot Station</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">plot</span>(station_data)</span></code></pre></div>
+</div>
+<div id="plot-northing-component" class="section level2">
+<h2>Plot Northing component</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">plot</span>(station_data, <span class="at">component =</span> <span class="st">&quot;N&quot;</span>)</span></code></pre></div>
+</div>
+<div id="estimate-models-on-station-data" class="section level2">
+<h2>Estimate models on station data</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>fit1 <span class="ot">&lt;-</span> <span class="fu">gmwmx2</span>(station_data, <span class="at">n_seasonal =</span> <span class="dv">2</span>, <span class="at">component =</span> <span class="st">&quot;N&quot;</span>, <span class="at">model =</span> <span class="fu">wn</span>())</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>fit1</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">plot</span>(fit1)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>fit2 <span class="ot">&lt;-</span> <span class="fu">gmwmx2</span>(station_data, <span class="at">n_seasonal =</span> <span class="dv">2</span>, <span class="at">component =</span> <span class="st">&quot;N&quot;</span>, <span class="at">model =</span> <span class="fu">wn</span>()<span class="sc">+</span> <span class="fu">pl</span>())</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>fit2</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">plot</span>(fit2)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>fit3 <span class="ot">=</span> <span class="fu">gmwmx2</span>(station_data, <span class="at">n_seasonal =</span> <span class="dv">2</span>, <span class="at">component =</span> <span class="st">&quot;N&quot;</span>, <span class="at">model =</span> <span class="fu">wn</span>() <span class="sc">+</span> <span class="fu">flicker</span>())</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>fit3</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">plot</span>(fit3)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>fit4 <span class="ot">=</span> <span class="fu">gmwmx2</span>(station_data, <span class="at">n_seasonal =</span> <span class="dv">2</span>, <span class="at">component =</span> <span class="st">&quot;N&quot;</span>, <span class="at">model =</span> <span class="fu">wn</span>() <span class="sc">+</span> <span class="fu">ar1</span>())</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>fit4</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">plot</span>(fit4)</span></code></pre></div>
+</div>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-bevis2014" class="csl-entry">
+Bevis, Michael, and A. Brown. 2014. <span>“<span class="nocase">Trajectory Models and Reference Frames for Crustal Motion
+Geodesy</span>.”</span> <em>Journal of Geodesy</em> 88 (283): 283--311.
+</div>
+<div id="ref-blewitt2024improved" class="csl-entry">
+Blewitt, Geoffrey. 2024. <span>“<span class="nocase">An Improved
+Equation of Latitude and a Global System of Graticule Distance
+Coordinates</span>.”</span> <em>Journal of Geodesy</em> 98 (1): 6.
+</div>
+<div id="ref-blewitt2018harnessing" class="csl-entry">
+Blewitt, Geoffrey, William Hammond, and Corn Kreemer. 2018. <span>“<span class="nocase">Harnessing the GPS Data Explosion for Interdisciplinary
+Science</span>.”</span> <em>Eos</em> 99 (2): e2020943118.
+</div>
+<div id="ref-bos2013fast" class="csl-entry">
+Bos, MS, RMS Fernandes, SDP Williams, and L Bastos. 2013. <span>“<span class="nocase">Fast Error Analysis of Continuous GNSS Observations with
+Missing Data</span>.”</span> <em>Journal of Geodesy</em> 87 (4): 351–60.
+</div>
+<div id="ref-he2017review" class="csl-entry">
+He, Xiaoxing, Jean-Philippe Montillet, Rui Fernandes, et al. 2017.
+<span>“<span class="nocase">Review of Current GPS Methodologies for
+Producing Accurate Time Series and their Error Sources</span>.”</span>
+<em>Journal of Geodynamics</em> 106: 12–29.
+</div>
+<div id="ref-langbein2008noise" class="csl-entry">
+Langbein, John. 2008. <span>“<span class="nocase">Noise in GPS
+Displacement Measurements from Southern California and Southern
+Nevada</span>.”</span> <em>Journal of Geophysical Research: Solid
+Earth</em> 113 (B5): 1–12.
+</div>
+<div id="ref-sobrero2020logarithmic" class="csl-entry">
+Sobrero, Franco S, Michael Bevis, Demián D Gómez, and Fei Wang. 2020.
+<span>“<span class="nocase">Logarithmic and Exponential Transients in
+GNSS Trajectory Models as Indicators of Dominant Processes in
+Postseismic Deformation</span>.”</span> <em>Journal of Geodesy</em> 94
+(9): 84.
+</div>
+<div id="ref-voirol2024inference" class="csl-entry">
+Voirol, Lionel, Haotian Xu, Yuming Zhang, Luca Insolia, Roberto
+Molinari, and Stéphane Guerrier. 2024. <span>“<span class="nocase">Inference for Large Scale Regression Models with
+Dependent Errors</span>.”</span> <em>arXiv Preprint
+arXiv:2409.05160</em>.
+</div>
+<div id="ref-williams2004error" class="csl-entry">
+Williams, Simon DP, Yehuda Bock, Peng Fang, et al. 2004. <span>“<span class="nocase">Error Analysis of Continuous GPS Position Time
+Series</span>.”</span> <em>Journal of Geophysical Research: Solid
+Earth</em> 109 (B3).
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

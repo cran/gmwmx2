@@ -5,38 +5,45 @@ knitr::opts_chunk$set(
   fig.align = "center" # Center align all plots
 )
 
-# knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(eval = FALSE)
 
 ## -----------------------------------------------------------------------------
-library(gmwmx2)
+# library(gmwmx2)
 
 ## -----------------------------------------------------------------------------
-station_data <- download_station_ngl("CHML")
+# station_data <- download_station_ngl("1LSU")
 
 ## -----------------------------------------------------------------------------
-plot(station_data)
+# plot(station_data)
 
 ## -----------------------------------------------------------------------------
-plot(station_data, component = "N")
+# plot(station_data, component = "N")
 
 ## -----------------------------------------------------------------------------
-fit1 <- gmwmx2(station_data, n_seasonal = 2, component = "N", stochastic_model = "wn + pl")
+# fit1 <- gmwmx2(station_data, n_seasonal = 2, component = "N", model = wn())
+# fit1
 
 ## -----------------------------------------------------------------------------
-summary(fit1)
+# plot(fit1)
 
 ## -----------------------------------------------------------------------------
-summary(fit1, scale_parameters = TRUE)
+# fit2 <- gmwmx2(station_data, n_seasonal = 2, component = "N", model = wn()+ pl())
+# fit2
 
 ## -----------------------------------------------------------------------------
-plot(fit1)
+# plot(fit2)
 
 ## -----------------------------------------------------------------------------
-fit2 <- gmwmx2(station_data, n_seasonal = 2, component = "N", stochastic_model = "wn + fl")
+# fit3 = gmwmx2(station_data, n_seasonal = 2, component = "N", model = wn() + flicker())
+# fit3
 
 ## -----------------------------------------------------------------------------
-summary(fit2)
+# plot(fit3)
 
 ## -----------------------------------------------------------------------------
-plot(fit2)
+# fit4 = gmwmx2(station_data, n_seasonal = 2, component = "N", model = wn() + ar1())
+# fit4
+
+## -----------------------------------------------------------------------------
+# plot(fit4)
 

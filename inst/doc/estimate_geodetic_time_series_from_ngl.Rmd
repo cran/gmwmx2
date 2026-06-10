@@ -1,0 +1,165 @@
+---
+title: "Estimate geodetic time series from the Nevada Geodetic Laboratory"
+output: rmarkdown::html_vignette
+bibliography: REFERENCES.bib
+vignette: >
+  %\VignetteIndexEntry{Estimate geodetic time series from the Nevada Geodetic Laboratory}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  fig.width = 10, # Set default plot width (adjust as needed)
+  fig.height = 8, # Set default plot height (adjust as needed)
+  fig.align = "center" # Center align all plots
+)
+
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+# Model and estimator
+
+This vignette builds on the general framework described in the vignettes "Estimate linear models with dependent errors" and "Estimate linear models with dependent errors and missing observations". We do not repeat the full model, missingness mechanism, or estimation details here. Please refer to these vignettes for the formal setup, and use this one as a
+hands-on guide for geodetic time series from the Nevada Geodetic Laboratory.
+
+
+# Estimating tectonic velocities and crustal uplift
+
+While the GMWMX, as described above and in more detail in
+@voirol2024inference, is a general method for estimating large linear models
+with complex dependence structures in presence of missing observations, the
+`gmwmx2` `R` package allows to estimate tectonic
+velocities and crustal uplift from position time series in graticule distance (GD) coordinates
+provided by the Nevada Geodetic Laboratory
+[@blewitt2024improved; @blewitt2018harnessing].
+
+## Trajectory model
+
+To estimate the trajectory model (see, e.g., @bevis2014 for more details), we
+construct the design matrix $\boldsymbol{X}$ such that the $i$-th component of
+the vector $\mathbf{X} {{\boldsymbol{\beta}}}$ can be described as follows, with
+$t_i$ representing the $i^{\text{th}}$ ordered time point (epoch) in Modified
+Julian Date and $t_0$ representing the reference epoch located exactly in the
+middle of the start and end points of the time series:
+
+\begin{split}
+ \mathbb{E}[\mathbf{Y}_i] &= \mathbf{X}_i^T {{\boldsymbol{\beta}}}  \\
+&= a + b \left(t_{i} - t_0\right) +  \sum_{h=1}^{m}\left[c_{h} \sin \left(2 \pi f_{h} t_{i}\right)  + d_h \cos \left(2 \pi f_h t_i\right)\right] + \\& \sum_{j=1}^{r}e_j H\left(t_i - t_j\right) + \sum_{k = 1 }^{s} l_k \left[1- \exp\left(\frac{-(t_i-t_k)}{\tau_k}\right)\right]H\left(t_{i}-\tau_k\right) 
+\end{split}
+
+where $a$ is the initial position at the reference epoch $t_0$, $b$ is the
+velocity parameter, and $c_h$ and $d_h$ are the periodic motion parameters
+($h = 1$ and $h = 2$ represent the annual and semi-annual seasonal terms,
+respectively with $f_1 = \frac{1}{365.25}$ and $f_2 = \frac{2}{365.25}$). The
+offset terms model earthquakes, equipment changes, or human intervention, in
+which $e_j$ is the magnitude of the step at epochs $t_j$, $r$ is the total
+number of offsets, and $H$ is the Heaviside step function defined as
+$H(x):= \begin{cases}1, & x \geq 0 \\ 0, & x<0\end{cases}$. The last term allows
+us to model post-seismic deformation (see, e.g., @sobrero2020logarithmic) where
+$s$ is the number of post-seismic relaxation times specified, $t_k$ is the time
+when the relaxation $k$
+starts in Modified Julian Date (MJD), $\tau_k$ is the relaxation period in days
+for the post-seismic relaxation $k$, and $l_k$ is the amplitude of the
+transient. Note that by default the estimates of the functional parameters are
+provided in units/day. 
+
+When loading data from a specific station using
+`gmwmx2::download_station_ngl()`, we extract from the Nevada Geodetic Laboratory
+the position time series in GD coordinates, the time steps associated with
+equipment or software changes, and the time steps associated with earthquakes
+near the station. All these objects are stored in an object of class
+`gnss_ts_ngl`.  
+
+When applying the function `gmwmx2::gmwmx2()` to an object of class
+`gnss_ts_ngl`, we construct the design matrix $\boldsymbol{X}$ by considering
+an offset term for all equipment or software change steps and all earthquakes
+indicated by the NGL. We also specify a post-seismic relaxation term for all
+earthquakes indicated by the NGL. If no relaxation time is specified in the
+argument `vec_earthquakes_relaxation_time`, we use a default relaxation time of
+$365.25$ days. 
+
+## Stochastic model
+
+It is generally recognized that noise in GNSS time series is best described by
+a combination of colored noise plus white noise
+[@he2017review; @langbein2008noise; @williams2004error; @bos2013fast], where the
+white noise generally models noise at high frequencies and the colored noise
+models the lower frequencies of the spectrum. 
+
+In `gmwmx2`, you can pass any valid stochastic model to the estimator: either
+a single time-series model (e.g., `wn()`, `ar1()`, `pl()`, `matern()`, `rw()`,
+`flicker()`) or a composite sum model built with `+` (e.g.,
+`wn() + pl()` or `wn() + ar1() + rw()`). This makes the stochastic specification
+very general and easy to adapt to your application.
+
+# Example of estimation
+
+Let us showcase how to estimate tectonic velocity for one specific component
+(North, East, or Vertical) of one station.
+
+First, load the `gmwmx2` package.
+```{r}
+library(gmwmx2)
+```
+
+## Download a station from Nevada Geodetic Laboratory
+```{r}
+station_data <- download_station_ngl("1LSU")
+```
+
+## Plot Station
+```{r}
+plot(station_data)
+```
+
+
+## Plot Northing component
+```{r}
+plot(station_data, component = "N")
+```
+
+
+## Estimate models on station data
+```{r}
+fit1 <- gmwmx2(station_data, n_seasonal = 2, component = "N", model = wn())
+fit1
+```
+
+
+```{r}
+plot(fit1)
+```
+
+```{r}
+fit2 <- gmwmx2(station_data, n_seasonal = 2, component = "N", model = wn()+ pl())
+fit2
+```
+
+```{r}
+plot(fit2)
+```
+
+```{r}
+fit3 = gmwmx2(station_data, n_seasonal = 2, component = "N", model = wn() + flicker())
+fit3
+```
+
+
+```{r}
+plot(fit3)
+```
+```{r}
+fit4 = gmwmx2(station_data, n_seasonal = 2, component = "N", model = wn() + ar1())
+fit4
+```
+
+
+```{r}
+plot(fit4)
+```
+
+
+# References

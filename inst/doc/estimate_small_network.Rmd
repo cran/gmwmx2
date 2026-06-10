@@ -1,9 +1,9 @@
 ---
-title: "Estimate a small network of GNSS station"
+title: "Estimate a small network of GNSS stations"
 output: rmarkdown::html_vignette
 bibliography: REFERENCES.bib
 vignette: >
-  %\VignetteIndexEntry{Estimate a small network of GNSS station}
+  %\VignetteIndexEntry{Estimate a small network of GNSS stations}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,7 +17,9 @@ knitr::opts_chunk$set(
   fig.align = "center" # Center align all plots
 )
 
-# knitr::opts_chunk$set(eval = FALSE)
+
+# so as not to execute this vignette during package development
+knitr::opts_chunk$set(eval = FALSE)
 ```
 
 
@@ -103,7 +105,7 @@ make_transparent <- function(colors, alpha = 0.5) {
 
 # Estimate a small network in France
 ```{r}
-# Estimate little network in France
+# Estimate a small network in France
 all_station <- download_all_stations_ngl()
 
 # download selected stations
@@ -116,8 +118,8 @@ for (station_index in seq_along(df_network$station_name)) {
   station_name <- df_network$station_name[station_index]
   # extract station
   station_data <- download_station_ngl(station_name = station_name)
-  fit_N <- gmwmx2(station_data, n_seasonal = 2, component = "N", stochastic_model = "wn + pl")
-  fit_E <- gmwmx2(station_data, n_seasonal = 2, component = "E", stochastic_model = "wn + pl")
+  fit_N <- gmwmx2(station_data, n_seasonal = 2, component = "N", model = wn() + pl())
+  fit_E <- gmwmx2(station_data, n_seasonal = 2, component = "E", model = wn() + pl())
   df_estimated_velocities[station_index, 1] <- station_name
   df_estimated_velocities[station_index, 2:6] <- c(fit_N$beta_hat[2], fit_N$std_beta_hat[2], fit_E$beta_hat[2], fit_E$std_beta_hat[2], dim(fit_N$design_matrix_X)[1])
 
@@ -173,7 +175,7 @@ combined_raster <- merge(
 
 # Plot estimated N-E velocities and associated uncertainty
 ```{r}
-# sett plot limits
+# set plot limits
 xlims <- c(2, 7)
 ylims <- c(44, 48)
 
@@ -315,4 +317,3 @@ text(
   labels = "20 mm/year"
 )
 ```
-

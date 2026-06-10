@@ -5,9 +5,6 @@ knitr::opts_chunk$set(
   fig.align = "center" # Center align all plots
 )
 
-
-# knitr::opts_chunk$set(eval = FALSE)
-
 ## -----------------------------------------------------------------------------
 library(gmwmx2)
 

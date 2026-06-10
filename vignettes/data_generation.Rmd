@@ -1,0 +1,138 @@
+---
+title: "Data generation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data generation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  fig.width = 10,
+  fig.height = 6,
+  fig.align = "center"
+)
+
+
+```
+
+This vignette shows how to build stochastic models, combine them with `+`,
+generate data, and plot the results.
+
+```{r}
+library(gmwmx2)
+set.seed(123)
+```
+
+
+
+# Available models
+
+You can build a single stochastic process with any of the following model
+constructors:
+
+- `wn()` (white noise)
+- `ar1()` (AR(1))
+- `pl()` (power-law)
+- `matern()` (Matérn)
+- `rw()` (random walk)
+- `flicker()` (flicker)
+
+Each constructor returns a `time_series_model` object that can be plotted or
+combined with others using `+`.
+
+
+# Stochastic models
+
+## White noise
+```{r}
+model_wn <- wn(sigma2 = 1)
+series_wn <- generate(model_wn, n = 500)
+plot(series_wn)
+```
+The generated object is a `generated_time_series` with a numeric series in
+`$series`:
+
+```{r}
+head(series_wn$series)
+```
+
+## AR(1)
+```{r}
+model_ar1 <- ar1(phi = 0.8, sigma2 = 1)
+series_ar1 <- generate(model_ar1, n = 500)
+plot(series_ar1)
+```
+
+## Power-law
+```{r}
+model_pl <- pl(kappa = 0.3, sigma2 = 1)
+series_pl <- generate(model_pl, n = 500)
+plot(series_pl)
+```
+
+## Matérn
+```{r}
+model_matern <- matern(sigma2 = 1, lambda = 1, alpha=1)
+series_matern <- generate(model_matern, n = 500)
+plot(series_matern)
+```
+
+## Random walk
+```{r}
+model_rw <- rw(sigma2 = 0.1)
+series_rw <- generate(model_rw, n = 500)
+plot(series_rw)
+```
+
+## Flicker
+```{r}
+model_fl <- flicker(sigma2 = 1)
+series_fl <- generate(model_fl, n = 500)
+plot(series_fl)
+```
+
+# Reproducible generation
+
+You can set a random seed before calling `generate()`, or pass a seed directly
+to `generate()`, to make the output deterministic. Using the same seed and
+model parameters produces the exact same time series.
+
+```{r}
+model_wn <- wn(sigma2 = 1)
+
+set.seed(1234)
+series_a <- generate(model_wn, n = 100)
+
+series_b <- generate(model_wn, n = 100, seed = 1234)
+series_c <- generate(model_wn, n = 100, seed = 4321)
+
+all.equal(series_a$series, series_b$series)
+all.equal(series_a$series, series_c$series)
+```
+
+# Composite models (sum of processes)
+
+Use `+` to build a composite model from multiple stochastic processes. The
+result is a `sum_model` that can be passed to `generate()`.
+
+```{r}
+model_wn_ar1 <- wn(sigma2 = 1) + ar1(phi = 0.8, sigma2 = 0.5)
+class(model_wn_ar1)
+series_wn_ar1 <- generate(model_wn_ar1, n = 500)
+plot(series_wn_ar1)
+
+```
+
+The composite output is a `generated_composite_model_time_series` with:
+
+- `series` (the total sum)
+- `components` (a list of each component series)
+- `n` (length of the series)
+- `model` (names of each component)
+- `parameters` (parameters of each component)
+
+```{r}
+names(series_wn_ar1)
+```
