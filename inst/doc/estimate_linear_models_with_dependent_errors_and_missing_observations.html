@@ -144,6 +144,28 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 
 
 
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
 
 <style type="text/css">body {
 background-color: #fff;
@@ -344,8 +366,8 @@ dependent errors and missing observations</h1>
 
 <p>This vignette demonstrates how to use the GMWMX estimator to estimate
 linear models with dependent errors described by a composite stochastic
-process in the presence of missing observations. Consider the model
-defined as:</p>
+process in the presence of missing observations <span class="citation">(Voirol et al. 2026)</span>. Consider the model defined
+as:</p>
 <p><span class="math display">\[\begin{equation}
     \mathbf{Y} =  \mathbf{X} \boldsymbol{\beta} +
 \boldsymbol{\varepsilon}, \quad \boldsymbol{\varepsilon} \sim
@@ -851,6 +873,14 @@ power‑law error model and compare against OLS.</p>
 <span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a>mat_res_fl_df<span class="sc">$</span>upper_ci_lm_beta1 <span class="ot">=</span> mat_res_fl_df<span class="sc">$</span>lm_beta1_hat <span class="sc">+</span> zval <span class="sc">*</span> mat_res_fl_df<span class="sc">$</span>lm_std_beta1_hat</span>
 <span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a>mat_res_fl_df<span class="sc">$</span>lower_ci_lm_beta1 <span class="ot">=</span> mat_res_fl_df<span class="sc">$</span>lm_beta1_hat <span class="sc">-</span> zval <span class="sc">*</span> mat_res_fl_df<span class="sc">$</span>lm_std_beta1_hat</span>
 <span id="cb21-12"><a href="#cb21-12" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">between</span>(<span class="fu">rep</span>(beta[<span class="dv">2</span>], B_fl), mat_res_fl_df<span class="sc">$</span>lower_ci_lm_beta1, mat_res_fl_df<span class="sc">$</span>upper_ci_lm_beta1) <span class="sc">%&gt;%</span> <span class="fu">mean</span>()</span></code></pre></div>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-voirol2026towards" class="csl-entry">
+Voirol, Lionel, Haotian Xu, Yuming Zhang, Luca Insolia, Roberto
+Molinari, and Stéphane Guerrier. 2026. <span>“<span class="nocase">Towards Open Science: Monitoring Crustal Deformations in
+North America</span>.”</span> <em>arXiv Preprint arXiv:2607.16264</em>,
+ahead of print. <a href="https://doi.org/10.48550/arXiv.2607.16264">https://doi.org/10.48550/arXiv.2607.16264</a>.
+</div>
+</div>
 </div>
 </div>
 
